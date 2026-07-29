@@ -59,7 +59,7 @@ function PrintPage() {
   const [templateKey, setTemplateKey] = useState("a4-landscape-90");
   const { data = [] } = useQuery({ queryKey: ["ordner"], queryFn: fetchOrdner });
 
-  const targetIds = ids ? ids.split(",").filter(Boolean) : [];
+  const targetIds: string[] = ids ? ids.split(",").filter(Boolean) : [];
   const selected = targetIds
     .map((id) => data.find((item) => item.id === id))
     .filter(Boolean) as Ordner[];

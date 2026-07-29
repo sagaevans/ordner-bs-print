@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PrintRouteImport } from './routes/print'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DetailIdRouteImport } from './routes/detail.$id'
 
+const PrintRoute = PrintRouteImport.update({
+  id: '/print',
+  path: '/print',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -25,32 +31,43 @@ const DetailIdRoute = DetailIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/print': typeof PrintRoute
   '/detail/$id': typeof DetailIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/print': typeof PrintRoute
   '/detail/$id': typeof DetailIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/print': typeof PrintRoute
   '/detail/$id': typeof DetailIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/detail/$id'
+  fullPaths: '/' | '/print' | '/detail/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/detail/$id'
-  id: '__root__' | '/' | '/detail/$id'
+  to: '/' | '/print' | '/detail/$id'
+  id: '__root__' | '/' | '/print' | '/detail/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PrintRoute: typeof PrintRoute
   DetailIdRoute: typeof DetailIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/print': {
+      id: '/print'
+      path: '/print'
+      fullPath: '/print'
+      preLoaderRoute: typeof PrintRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PrintRoute: PrintRoute,
   DetailIdRoute: DetailIdRoute,
 }
 export const routeTree = rootRouteImport
