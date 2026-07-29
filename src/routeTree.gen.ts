@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifikasiRouteImport } from './routes/verifikasi'
 import { Route as PrintRouteImport } from './routes/print'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DetailIdRouteImport } from './routes/detail.$id'
 
+const VerifikasiRoute = VerifikasiRouteImport.update({
+  id: '/verifikasi',
+  path: '/verifikasi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrintRoute = PrintRouteImport.update({
   id: '/print',
   path: '/print',
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/print': typeof PrintRoute
+  '/verifikasi': typeof VerifikasiRoute
   '/detail/$id': typeof DetailIdRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/print': typeof PrintRoute
+  '/verifikasi': typeof VerifikasiRoute
   '/detail/$id': typeof DetailIdRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,22 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/print': typeof PrintRoute
+  '/verifikasi': typeof VerifikasiRoute
   '/detail/$id': typeof DetailIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/auth' | '/print' | '/detail/$id'
+  fullPaths: '/' | '/admin' | '/auth' | '/print' | '/verifikasi' | '/detail/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/auth' | '/print' | '/detail/$id'
-  id: '__root__' | '/' | '/admin' | '/auth' | '/print' | '/detail/$id'
+  to: '/' | '/admin' | '/auth' | '/print' | '/verifikasi' | '/detail/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/auth'
+    | '/print'
+    | '/verifikasi'
+    | '/detail/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,11 +92,19 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   PrintRoute: typeof PrintRoute
+  VerifikasiRoute: typeof VerifikasiRoute
   DetailIdRoute: typeof DetailIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verifikasi': {
+      id: '/verifikasi'
+      path: '/verifikasi'
+      fullPath: '/verifikasi'
+      preLoaderRoute: typeof VerifikasiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/print': {
       id: '/print'
       path: '/print'
@@ -124,6 +148,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   PrintRoute: PrintRoute,
+  VerifikasiRoute: VerifikasiRoute,
   DetailIdRoute: DetailIdRoute,
 }
 export const routeTree = rootRouteImport
