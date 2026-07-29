@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PrintRouteImport } from './routes/print'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DetailIdRouteImport } from './routes/detail.$id'
 
 const PrintRoute = PrintRouteImport.update({
   id: '/print',
   path: '/print',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -31,30 +37,34 @@ const DetailIdRoute = DetailIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/print': typeof PrintRoute
   '/detail/$id': typeof DetailIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/print': typeof PrintRoute
   '/detail/$id': typeof DetailIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/print': typeof PrintRoute
   '/detail/$id': typeof DetailIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/print' | '/detail/$id'
+  fullPaths: '/' | '/auth' | '/print' | '/detail/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/print' | '/detail/$id'
-  id: '__root__' | '/' | '/print' | '/detail/$id'
+  to: '/' | '/auth' | '/print' | '/detail/$id'
+  id: '__root__' | '/' | '/auth' | '/print' | '/detail/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
   PrintRoute: typeof PrintRoute
   DetailIdRoute: typeof DetailIdRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/print'
       fullPath: '/print'
       preLoaderRoute: typeof PrintRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
   PrintRoute: PrintRoute,
   DetailIdRoute: DetailIdRoute,
 }
