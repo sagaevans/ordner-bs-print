@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Dashboard - Daftar Ordner Akuntansi | NasHKB" },
       {
         property: "og:description",
-        content: "Daftar ordner akuntansi: cari, lihat detail, dan cetak label ordner.",
+        content: "Daftar ordner akuntansi PT HK Bhirawa Steel: cari, lihat detail, dan cetak label ordner.",
       },
     ],
   }),

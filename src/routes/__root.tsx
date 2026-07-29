@@ -77,20 +77,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ordner Akuntansi - NasHKB" },
+      { title: "Dashboard - Daftar Ordner Akuntansi | NasHKB" },
       {
         name: "description",
-        content: "Manajemen dan cetak label ordner akuntansi PT HK Bhirawa Steel.",
+        content: "Daftar ordner akuntansi PT HK Bhirawa Steel: cari, lihat detail, dan cetak label ordner.",
       },
       { name: "author", content: "NasHKB" },
-      { property: "og:title", content: "Ordner Akuntansi - NasHKB" },
+      { property: "og:title", content: "Dashboard - Daftar Ordner Akuntansi | NasHKB" },
       {
         property: "og:description",
-        content: "Manajemen dan cetak label ordner akuntansi PT HK Bhirawa Steel.",
+        content: "Daftar ordner akuntansi PT HK Bhirawa Steel: cari, lihat detail, dan cetak label ordner.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Dashboard - Daftar Ordner Akuntansi | NasHKB" },
+      { name: "twitter:description", content: "Daftar ordner akuntansi PT HK Bhirawa Steel: cari, lihat detail, dan cetak label ordner." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9790e862-a36e-4ed1-9ed2-6fc401006999/id-preview-4f777fa3--933663a0-6a19-4d01-95ec-76910338f9dd.lovable.app-1785296462580.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9790e862-a36e-4ed1-9ed2-6fc401006999/id-preview-4f777fa3--933663a0-6a19-4d01-95ec-76910338f9dd.lovable.app-1785296462580.png" },
     ],
     links: [
       {
