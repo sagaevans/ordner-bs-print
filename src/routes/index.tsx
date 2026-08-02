@@ -33,6 +33,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const { canEdit } = useAuth();
   const [keyword, setKeyword] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | typeof STATUS_SUDAH | typeof STATUS_BELUM>("all");
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [formOpen, setFormOpen] = useState(false);
@@ -42,15 +43,17 @@ function Dashboard() {
 
   const filtered = useMemo(() => {
     const k = keyword.toLowerCase().trim();
-    if (!k) return data;
-    return data.filter(
-      (item) =>
+    return data.filter((item) => {
+      const matchesKeyword =
+        !k ||
         item.kode.toLowerCase().includes(k) ||
         item.jenis.toLowerCase().includes(k) ||
         String(item.no_urut).includes(k) ||
-        String(item.tahun).includes(k),
-    );
-  }, [data, keyword]);
+        String(item.tahun).includes(k);
+      const matchesStatus = statusFilter === "all" || item.status === statusFilter;
+      return matchesKeyword && matchesStatus;
+    });
+  }, [data, keyword, statusFilter]);
 
   const totalOrdner = data.length;
   const totalDokumen = data.reduce((sum, item) => sum + (item.jumlah || 0), 0);
@@ -96,6 +99,18 @@ function Dashboard() {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
             />
+            <select
+              className="form-control"
+              style={{ width: 170 }}
+              value={statusFilter}
+              onChange={(e) =>
+                setStatusFilter(e.target.value as "all" | typeof STATUS_SUDAH | typeof STATUS_BELUM)
+              }
+            >
+              <option value="all">Semua Status</option>
+              <option value={STATUS_SUDAH}>{STATUS_SUDAH}</option>
+              <option value={STATUS_BELUM}>{STATUS_BELUM}</option>
+            </select>
             <button className="btn btn-outline" onClick={() => setSelectMode(true)}>
               ☑ Pilih untuk Print
             </button>
