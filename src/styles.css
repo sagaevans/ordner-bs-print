@@ -397,6 +397,71 @@ button.badge:hover { filter: brightness(0.95); box-shadow: 0 0 0 3px rgba(212,17
     text-transform: uppercase;
 }
 
+.col-filter { position: relative; display: flex; align-items: center; gap: 6px; }
+.col-filter-label { white-space: nowrap; }
+.col-filter-btn {
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.12);
+    color: var(--white);
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 5px;
+    font-size: 0.7rem;
+}
+.col-filter-btn:hover { background: rgba(255,255,255,0.25); }
+.col-filter-btn.is-active { background: var(--gold-primary); color: var(--navy-deep); border-color: var(--gold-primary); }
+.col-filter-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 60;
+    width: 230px;
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 12px 28px rgba(15, 33, 72, 0.18);
+    padding: 8px;
+    text-transform: none;
+    letter-spacing: normal;
+}
+.col-filter-search {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--navy-primary);
+    font-family: inherit;
+}
+.col-filter-list { max-height: 210px; overflow-y: auto; margin: 8px 0; }
+.col-filter-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--navy-primary);
+    cursor: pointer;
+    border-radius: 4px;
+}
+.col-filter-item:hover { background: #F7F9FC; }
+.col-filter-empty { font-size: 0.8rem; color: var(--text-muted); padding: 6px 4px; font-weight: 400; }
+.col-filter-actions { display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 8px; }
+.col-filter-action {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--white);
+    color: var(--navy-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+}
+.col-filter-action.is-primary { background: var(--navy-primary); border-color: var(--navy-primary); color: var(--white); }
+
 .modal {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
