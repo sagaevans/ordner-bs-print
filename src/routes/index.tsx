@@ -99,6 +99,18 @@ function Dashboard() {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
             />
+            <select
+              className="form-control"
+              style={{ width: 170 }}
+              value={statusFilter}
+              onChange={(e) =>
+                setStatusFilter(e.target.value as "all" | typeof STATUS_SUDAH | typeof STATUS_BELUM)
+              }
+            >
+              <option value="all">Semua Status</option>
+              <option value={STATUS_SUDAH}>{STATUS_SUDAH}</option>
+              <option value={STATUS_BELUM}>{STATUS_BELUM}</option>
+            </select>
             <button className="btn btn-outline" onClick={() => setSelectMode(true)}>
               ☑ Pilih untuk Print
             </button>
