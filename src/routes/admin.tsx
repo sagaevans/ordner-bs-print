@@ -3,6 +3,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import { Navbar } from "@/components/Navbar";
+import { ColumnFilter } from "@/components/ColumnFilter";
 import { OrdnerFormModal } from "@/components/OrdnerFormModal";
 import { StatusBadge } from "@/components/StatusBadge";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,15 +28,47 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
+type ColKey = "kode" | "no_urut" | "jenis" | "tahun" | "nomor" | "jumlah" | "status";
+
+const COLUMNS: { key: ColKey; label: string; numeric?: boolean }[] = [
+  { key: "kode", label: "Kode" },
+  { key: "no_urut", label: "No. Urut", numeric: true },
+  { key: "jenis", label: "Jenis Dokumen" },
+  { key: "tahun", label: "Tahun", numeric: true },
+  { key: "nomor", label: "No. Dokumen" },
+  { key: "jumlah", label: "Jumlah", numeric: true },
+  { key: "status", label: "Status" },
+];
+
+const cellValue = (item: Ordner, key: ColKey): string => {
+  switch (key) {
+    case "kode":
+      return item.kode;
+    case "no_urut":
+      return String(item.no_urut);
+    case "jenis":
+      return item.jenis;
+    case "tahun":
+      return String(item.tahun);
+    case "nomor":
+      return `${item.nomor_awal} s/d ${item.nomor_akhir}`;
+    case "jumlah":
+      return String(item.jumlah);
+    case "status":
+      return item.status;
+  }
+};
+
 function AdminPage() {
   const { session, profile, canEdit, loading } = useAuth();
   const [keyword, setKeyword] = useState("");
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Ordner | null>(null);
+  const [filters, setFilters] = useState<Partial<Record<ColKey, Set<string>>>>({});
 
   const { data = [], refetch } = useQuery({ queryKey: ["ordner"], queryFn: fetchOrdner });
 
-  const filtered = useMemo(() => {
+  const searched = useMemo(() => {
     const k = keyword.toLowerCase().trim();
     if (!k) return data;
     return data.filter(
@@ -46,6 +79,29 @@ function AdminPage() {
         String(item.tahun).includes(k),
     );
   }, [data, keyword]);
+
+  const matches = (item: Ordner, skip?: ColKey) =>
+    COLUMNS.every(({ key }) => {
+      if (key === skip) return true;
+      const set = filters[key];
+      return !set || set.has(cellValue(item, key));
+    });
+
+  const filtered = useMemo(
+    () => searched.filter((item) => matches(item)),
+    [searched, filters],
+  );
+
+  const optionsFor = (key: ColKey, numeric?: boolean) => {
+    const pool = searched.filter((item) => matches(item, key));
+    const unique = Array.from(new Set(pool.map((item) => cellValue(item, key))));
+    unique.sort((a, b) =>
+      numeric ? Number(a) - Number(b) : a.localeCompare(b, "id", { numeric: true }),
+    );
+    return unique;
+  };
+
+  const activeFilterCount = Object.keys(filters).length;
 
   const handleDelete = async (item: Ordner) => {
     if (!window.confirm(`Hapus ordner "${item.kode}"?`)) return;
@@ -124,20 +180,35 @@ function AdminPage() {
                 Tambah Ordner
               </button>
             )}
+            {activeFilterCount > 0 && (
+              <button className="btn btn-outline" onClick={() => setFilters({})}>
+                Reset Filter ({activeFilterCount})
+              </button>
+            )}
           </div>
         </header>
 
-        <div className="table-responsive">
+        <div className="table-responsive filterable">
           <table className="data-table">
             <thead>
               <tr>
-                <th>Kode</th>
-                <th>No. Urut</th>
-                <th>Jenis Dokumen</th>
-                <th>Tahun</th>
-                <th>No. Dokumen</th>
-                <th>Jumlah</th>
-                <th>Status</th>
+                {COLUMNS.map((col) => (
+                  <th key={col.key}>
+                    <ColumnFilter
+                      label={col.label}
+                      values={optionsFor(col.key, col.numeric)}
+                      selected={filters[col.key]}
+                      onApply={(next) =>
+                        setFilters((prev) => {
+                          const copy = { ...prev };
+                          if (next) copy[col.key] = next;
+                          else delete copy[col.key];
+                          return copy;
+                        })
+                      }
+                    />
+                  </th>
+                ))}
                 <th style={{ textAlign: "center" }}>Aksi</th>
               </tr>
             </thead>
