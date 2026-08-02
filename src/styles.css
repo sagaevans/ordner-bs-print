@@ -398,6 +398,8 @@ button.badge:hover { filter: brightness(0.95); box-shadow: 0 0 0 3px rgba(212,17
 }
 
 .col-filter { position: relative; display: flex; align-items: center; gap: 6px; }
+.table-responsive.filterable { overflow: visible; }
+@media (max-width: 900px) { .table-responsive.filterable { overflow-x: auto; } }
 .col-filter-label { white-space: nowrap; }
 .col-filter-btn {
     border: 1px solid rgba(255,255,255,0.35);
