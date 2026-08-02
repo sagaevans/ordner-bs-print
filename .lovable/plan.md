@@ -32,7 +32,7 @@ KODE ▼            <- klik ikon
 - Filter antar kolom bersifat **AND** — memilih Tahun 2026 lalu Status "Belum Print" hanya menampilkan baris yang memenuhi keduanya.
 - Daftar nilai unik pada tiap dropdown dihitung dari data yang sudah tersaring oleh kolom lain (seperti Excel), sehingga tidak muncul pilihan yang menghasilkan nol baris.
 - Kolom yang sedang aktif difilter ikonnya berubah (ikon corong) agar terlihat jelas.
-- Sorting hanya satu kolom aktif dalam satu waktu.
+- **Filter bisa aktif di banyak kolom sekaligus** (misal Kode + Tahun + Status bersamaan), persis seperti Excel. Yang hanya boleh satu dalam satu waktu adalah **urutan sort** — memilih sort di kolom lain hanya memindahkan urutan ke kolom itu, tanpa menghapus filter kolom mana pun.
 - Kotak pencarian global "Cari data..." di atas tabel **tetap ada** dan bekerja bersama filter kolom.
 - Tombol **Reset Filter** muncul di header saat ada filter/sort aktif, untuk mengembalikan tampilan ke semula.
 - Dropdown menutup saat klik di luar area atau tekan Escape.
