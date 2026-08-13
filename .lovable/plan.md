@@ -1,47 +1,74 @@
-# Filter Kolom Gaya Excel di Admin Panel
+# Plan: Tambah 2 Filter Dashboard + Footer Kontak Developer
 
-Menambahkan tombol filter (ikon panah) di setiap header kolom tabel Admin Panel, persis seperti AutoFilter di Excel.
+## 1. Dua filter baru di Dashboard (dropdown sederhana)
 
-## Yang akan dibuat
+File: `src/routes/index.tsx`
 
-Setiap header kolom — Kode, No. Urut, Jenis Dokumen, Tahun, No. Dokumen, Jumlah, Status — mendapat ikon panah kecil di sisi kanan. Klik ikon membuka panel dropdown berisi:
+Sudah ada 2 filter: pencarian teks (`keyword`) + status (`statusFilter`). Tambah 2 filter baru agar total 4:
 
-- **Sort A ke Z / Z ke A** (untuk angka: kecil→besar / besar→kecil)
-- **Kotak Search** untuk menyaring daftar nilai di bawahnya
-- **Daftar checkbox** semua nilai unik pada kolom tersebut, dengan opsi **(Pilih Semua)** di paling atas
-- Tombol **OK** dan **Batal**
+- **Jenis Dokumen** (`jenisFilter`) — dropdown `<select>` berisi nilai unik dari `data.map(o => o.jenis)` (diurutkan, dibuang duplikat). Opsi pertama "Semua Jenis", lalu tiap nilai jenis.
+- **Tahun** (`tahunFilter`) — dropdown `<select>` berisi nilai unik dari `data.map(o => String(o.tahun))` (diurutkan descending). Opsi pertama "Semua Tahun", lalu tiap tahun.
 
-```text
-KODE ▼            <- klik ikon
- ┌────────────────────────┐
- │ A→Z  Urutkan naik      │
- │ Z→A  Urutkan turun     │
- ├────────────────────────┤
- │ [ Cari...            ] │
- │ ☑ (Pilih Semua)        │
- │ ☑ BBK 01               │
- │ ☑ BBK 02               │
- │ ☑ KPI 2025             │
- ├────────────────────────┤
- │        [OK] [Batal]    │
- └────────────────────────┘
+State baru:
+```ts
+const [jenisFilter, setJenisFilter] = useState<string>("all");
+const [tahunFilter, setTahunFilter] = useState<string>("all");
 ```
 
-## Perilaku
+Nilai unik dihitung pakai `useMemo` dari `data` agar tetap reaktif terhadap perubahan data:
+```ts
+const jenisOptions = useMemo(
+  () => Array.from(new Set(data.map((o) => o.jenis).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
+  [data]
+);
+const tahunOptions = useMemo(
+  () => Array.from(new Set(data.map((o) => String(o.tahun)).filter(Boolean))).sort((a, b) => Number(b) - Number(a)),
+  [data]
+);
+```
 
-- Filter antar kolom bersifat **AND** — memilih Tahun 2026 lalu Status "Belum Print" hanya menampilkan baris yang memenuhi keduanya.
-- Daftar nilai unik pada tiap dropdown dihitung dari data yang sudah tersaring oleh kolom lain (seperti Excel), sehingga tidak muncul pilihan yang menghasilkan nol baris.
-- Kolom yang sedang aktif difilter ikonnya berubah (ikon corong) agar terlihat jelas.
-- **Filter bisa aktif di banyak kolom sekaligus** (misal Kode + Tahun + Status bersamaan), persis seperti Excel. Yang hanya boleh satu dalam satu waktu adalah **urutan sort** — memilih sort di kolom lain hanya memindahkan urutan ke kolom itu, tanpa menghapus filter kolom mana pun.
-- Kotak pencarian global "Cari data..." di atas tabel **tetap ada** dan bekerja bersama filter kolom.
-- Tombol **Reset Filter** muncul di header saat ada filter/sort aktif, untuk mengembalikan tampilan ke semula.
-- Dropdown menutup saat klik di luar area atau tekan Escape.
-- Semua ini murni tampilan/klien — tidak ada perubahan database, hak akses, maupun tombol Tambah/Edit/Hapus.
+`filtered` diperbarui menambahkan kondisi:
+```ts
+const matchesJenis = jenisFilter === "all" || item.jenis === jenisFilter;
+const matchesTahun = tahunFilter === "all" || String(item.tahun) === tahunFilter;
+return matchesKeyword && matchesStatus && matchesJenis && matchesTahun;
+```
 
-## Catatan teknis
+Tata letak: keempat kontrol filter tetap di dalam `<header className="page-header">` div kanan, `flexWrap: wrap` agar otomatis pindah baris. Dropdown Jenis Dokumen lebar ~200px, Tahun lebar ~140px, diletakkan setelah dropdown Status (urutan: teks → status → jenis → tahun).
 
-- Komponen baru `src/components/ColumnFilter.tsx`: popover berisi sort, search, checkbox list, OK/Batal. Posisi absolut relatif terhadap sel header, dengan `overflow` tabel disesuaikan agar dropdown tidak terpotong.
-- State di `src/routes/admin.tsx`: `filters: Record<string, Set<string>>` (kosong = semua nilai lolos) dan `sort: { key, dir } | null`.
-- Nilai kolom "No. Dokumen" diperlakukan sebagai string gabungan `nomor_awal s/d nomor_akhir` agar cocok dengan yang ditampilkan.
-- Kolom numerik (No. Urut, Tahun, Jumlah) diurutkan secara numerik, bukan alfabet.
-- Styling memakai token warna yang sudah ada (navy #183669 / gold) di `src/styles.css`, tanpa hardcode warna baru.
+Tidak ada perubahan di file lain untuk bagian filter.
+
+## 2. Footer kontak developer (Dashboard saja)
+
+Tambah elemen footer baru di `src/routes/index.tsx`, setelah `</main>` dan sebelum `<div className="bulk-action-panel">` (atau setelahnya — di luar `<main>`, tetap di dalam `div.app`).
+
+Konten footer:
+- Judul kecil: "Kontak Developer"
+- Baris 1 (developer / user): "nasz — nasotp7@gmail.com" (email sebagai `mailto:` link)
+- Baris 2 (Lovable): "Dibuat dengan Lovable — lovable.dev" (link `https://lovable.dev`)
+
+Gaya: pakai token warna yang sudah ada, `no-print` agar tidak ikut tercetak. Background navy (`--navy-deep`), teks putih, email & link Lovable berwarna gold (`--gold-primary`). Layout flex column, centered, padding atas-bawah ~2rem.
+
+Tambah class CSS baru di `src/styles.css`:
+```css
+.app-footer {
+  background: var(--navy-deep);
+  color: var(--white, #fff);
+  padding: 1.75rem 1rem;
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+.app-footer h4 { font-size: 0.8rem; letter-spacing: 0.5px; text-transform: uppercase; color: var(--gold-primary); margin: 0 0 0.5rem; }
+.app-footer p { margin: 0.25rem 0; }
+.app-footer a { color: var(--gold-primary); text-decoration: none; font-weight: 600; }
+.app-footer a:hover { text-decoration: underline; }
+```
+
+Hanya muncul di Dashboard (index), tidak di halaman lain.
+
+## 3. Verifikasi
+
+- Build/typecheck lewat otomatis.
+- Pastikan 4 filter bekerja bersamaan (AND logic).
+- Pastikan footer tidak ikut tercetak saat print label (class `no-print`).
