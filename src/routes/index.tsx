@@ -34,12 +34,23 @@ function Dashboard() {
   const { canEdit } = useAuth();
   const [keyword, setKeyword] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | typeof STATUS_SUDAH | typeof STATUS_BELUM>("all");
+  const [jenisFilter, setJenisFilter] = useState<string>("all");
+  const [tahunFilter, setTahunFilter] = useState<string>("all");
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Ordner | null>(null);
 
   const { data = [], refetch } = useQuery({ queryKey: ["ordner"], queryFn: fetchOrdner });
+
+  const jenisOptions = useMemo(
+    () => Array.from(new Set(data.map((o) => o.jenis).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
+    [data],
+  );
+  const tahunOptions = useMemo(
+    () => Array.from(new Set(data.map((o) => String(o.tahun)).filter(Boolean))).sort((a, b) => Number(b) - Number(a)),
+    [data],
+  );
 
   const filtered = useMemo(() => {
     const k = keyword.toLowerCase().trim();
@@ -51,9 +62,11 @@ function Dashboard() {
         String(item.no_urut).includes(k) ||
         String(item.tahun).includes(k);
       const matchesStatus = statusFilter === "all" || item.status === statusFilter;
-      return matchesKeyword && matchesStatus;
+      const matchesJenis = jenisFilter === "all" || item.jenis === jenisFilter;
+      const matchesTahun = tahunFilter === "all" || String(item.tahun) === tahunFilter;
+      return matchesKeyword && matchesStatus && matchesJenis && matchesTahun;
     });
-  }, [data, keyword, statusFilter]);
+  }, [data, keyword, statusFilter, jenisFilter, tahunFilter]);
 
   const totalOrdner = data.length;
   const totalDokumen = data.reduce((sum, item) => sum + (item.jumlah || 0), 0);
@@ -110,6 +123,32 @@ function Dashboard() {
               <option value="all">Semua Status</option>
               <option value={STATUS_SUDAH}>{STATUS_SUDAH}</option>
               <option value={STATUS_BELUM}>{STATUS_BELUM}</option>
+            </select>
+            <select
+              className="form-control"
+              style={{ width: 200 }}
+              value={jenisFilter}
+              onChange={(e) => setJenisFilter(e.target.value)}
+            >
+              <option value="all">Semua Jenis</option>
+              {jenisOptions.map((j) => (
+                <option key={j} value={j}>
+                  {j}
+                </option>
+              ))}
+            </select>
+            <select
+              className="form-control"
+              style={{ width: 140 }}
+              value={tahunFilter}
+              onChange={(e) => setTahunFilter(e.target.value)}
+            >
+              <option value="all">Semua Tahun</option>
+              {tahunOptions.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
             </select>
             <button className="btn btn-outline" onClick={() => setSelectMode(true)}>
               ☑ Pilih untuk Print
@@ -267,6 +306,20 @@ function Dashboard() {
           ))}
         </div>
       </main>
+
+      <footer className="app-footer no-print">
+        <h4>Kontak Developer</h4>
+        <p>
+          nasz —{" "}
+          <a href="mailto:nasotp7@gmail.com">nasotp7@gmail.com</a>
+        </p>
+        <p>
+          Dibuat dengan Lovable —{" "}
+          <a href="https://lovable.dev" target="_blank" rel="noreferrer">
+            lovable.dev
+          </a>
+        </p>
+      </footer>
 
       <div className={`bulk-action-panel${selectMode ? " show" : ""}`}>
         <span style={{ fontWeight: 600, color: "white" }}>{selected.length} Ordner Terpilih</span>
