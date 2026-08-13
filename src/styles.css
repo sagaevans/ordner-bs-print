@@ -723,3 +723,26 @@ button.badge:hover { filter: brightness(0.95); box-shadow: 0 0 0 3px rgba(212,17
         break-inside: avoid;
     }
 }
+
+.app-footer {
+    background: var(--navy-deep);
+    color: #fff;
+    padding: 1.75rem 1rem;
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.85rem;
+}
+.app-footer h4 {
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--gold-primary);
+    margin: 0 0 0.5rem;
+}
+.app-footer p { margin: 0.25rem 0; }
+.app-footer a {
+    color: var(--gold-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+.app-footer a:hover { text-decoration: underline; }
