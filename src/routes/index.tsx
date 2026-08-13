@@ -34,12 +34,23 @@ function Dashboard() {
   const { canEdit } = useAuth();
   const [keyword, setKeyword] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | typeof STATUS_SUDAH | typeof STATUS_BELUM>("all");
+  const [jenisFilter, setJenisFilter] = useState<string>("all");
+  const [tahunFilter, setTahunFilter] = useState<string>("all");
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Ordner | null>(null);
 
   const { data = [], refetch } = useQuery({ queryKey: ["ordner"], queryFn: fetchOrdner });
+
+  const jenisOptions = useMemo(
+    () => Array.from(new Set(data.map((o) => o.jenis).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
+    [data],
+  );
+  const tahunOptions = useMemo(
+    () => Array.from(new Set(data.map((o) => String(o.tahun)).filter(Boolean))).sort((a, b) => Number(b) - Number(a)),
+    [data],
+  );
 
   const filtered = useMemo(() => {
     const k = keyword.toLowerCase().trim();
@@ -51,9 +62,11 @@ function Dashboard() {
         String(item.no_urut).includes(k) ||
         String(item.tahun).includes(k);
       const matchesStatus = statusFilter === "all" || item.status === statusFilter;
-      return matchesKeyword && matchesStatus;
+      const matchesJenis = jenisFilter === "all" || item.jenis === jenisFilter;
+      const matchesTahun = tahunFilter === "all" || String(item.tahun) === tahunFilter;
+      return matchesKeyword && matchesStatus && matchesJenis && matchesTahun;
     });
-  }, [data, keyword, statusFilter]);
+  }, [data, keyword, statusFilter, jenisFilter, tahunFilter]);
 
   const totalOrdner = data.length;
   const totalDokumen = data.reduce((sum, item) => sum + (item.jumlah || 0), 0);
