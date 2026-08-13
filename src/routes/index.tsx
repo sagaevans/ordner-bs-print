@@ -307,6 +307,20 @@ function Dashboard() {
         </div>
       </main>
 
+      <footer className="app-footer no-print">
+        <h4>Kontak Developer</h4>
+        <p>
+          nasz —{" "}
+          <a href="mailto:nasotp7@gmail.com">nasotp7@gmail.com</a>
+        </p>
+        <p>
+          Dibuat dengan Lovable —{" "}
+          <a href="https://lovable.dev" target="_blank" rel="noreferrer">
+            lovable.dev
+          </a>
+        </p>
+      </footer>
+
       <div className={`bulk-action-panel${selectMode ? " show" : ""}`}>
         <span style={{ fontWeight: 600, color: "white" }}>{selected.length} Ordner Terpilih</span>
         <div style={{ display: "flex", gap: 10 }}>
