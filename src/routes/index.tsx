@@ -124,6 +124,32 @@ function Dashboard() {
               <option value={STATUS_SUDAH}>{STATUS_SUDAH}</option>
               <option value={STATUS_BELUM}>{STATUS_BELUM}</option>
             </select>
+            <select
+              className="form-control"
+              style={{ width: 200 }}
+              value={jenisFilter}
+              onChange={(e) => setJenisFilter(e.target.value)}
+            >
+              <option value="all">Semua Jenis</option>
+              {jenisOptions.map((j) => (
+                <option key={j} value={j}>
+                  {j}
+                </option>
+              ))}
+            </select>
+            <select
+              className="form-control"
+              style={{ width: 140 }}
+              value={tahunFilter}
+              onChange={(e) => setTahunFilter(e.target.value)}
+            >
+              <option value="all">Semua Tahun</option>
+              {tahunOptions.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
             <button className="btn btn-outline" onClick={() => setSelectMode(true)}>
               ☑ Pilih untuk Print
             </button>
